@@ -81,7 +81,7 @@ app.get('/topCustomers', async (req, res) => {
         },
       },
       {
-        $sort: { TotalValue: -1 },
+        $sort: { TotalRevenue: -1 },
       },
       {
         $limit: 10,
