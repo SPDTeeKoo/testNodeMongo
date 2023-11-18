@@ -34,6 +34,9 @@ app.get('/customers', async (req, res) => {
   }
 });
 
+//Make a rest API by getting the data from imported tables.
+//the result in the API should be as follows
+//top 10 Customers with highest revenue (Sum of cost), Response data , Customer ID, Customer name, product id, product name, total qty ordered, total value of that product
 // API endpoint to get top 10 customers by revenue
 app.get('/topCustomers', async (req, res) => {
   try {
@@ -62,11 +65,18 @@ app.get('/topCustomers', async (req, res) => {
           _id: '$CustId',
           // CustomerID: { $first: '$CustId' },
           CustomerName: { $first: '$customerDetails.CustomerName' },
-          ProductID: { $push: '$lineItems.prodId' },
-          ProductName: { $push: '$productDetails.ProductName' },
-          TotalQtyOrdered: { $sum: '$lineItems.prodCount' },
-          TotalValue: {
+          // ProductID: { $push: '$lineItems.prodId' },
+          // ProductName: { $push: '$productDetails.ProductName' },
+          TotalRevenue: {
             $sum: { $multiply: ['$lineItems.Cost', '$lineItems.prodCount'] },
+          },
+          Products: {
+            $push: {
+              ProductID: '$lineItems.prodId',
+              ProductName: '$productDetails.ProductName',
+              TotalQtyOrdered: '$lineItems.prodCount',
+              TotalValue: '$lineItems.Cost',
+            },
           },
         },
       },
